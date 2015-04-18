@@ -103,6 +103,39 @@ impl Tetromino {
         }
     }
 
+    fn check_collision(&self) -> bool {
+        for &(x, _, _) in self.blocks.iter() {
+            if (self.x + x as i32) < 0 {
+                return true;
+            }
+            if (self.x + x as i32) >= BOARD_WIDTH as i32 {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    pub fn move_left(&mut self, ) {
+        let orig_x = self.x;
+
+        self.x -= 1;
+
+        if self.check_collision() {
+            self.x = orig_x;
+        }
+    }
+
+    pub fn move_right(&mut self) {
+        let orig_x = self.x;
+
+        self.x += 1;
+
+        if self.check_collision() {
+            self.x = orig_x;
+        }
+    }
+
     pub fn draw(&self, drawer: &mut RenderDrawer) {
         for &(x, y, block) in self.blocks.iter() {
             block.draw(drawer,
