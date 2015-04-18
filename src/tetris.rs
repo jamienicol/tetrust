@@ -51,6 +51,67 @@ impl Block {
     }
 }
 
+pub enum TetrominoShape { I, O, T, S, Z, J, L }
+
+pub struct Tetromino {
+    x: i32,
+    y: i32,
+    blocks: [(i32, i32, Block); 4]
+}
+
+impl Tetromino {
+    pub fn new(shape: TetrominoShape) -> Tetromino {
+        Tetromino {
+            x: 0,
+            y: 0,
+            blocks: match shape {
+                TetrominoShape::I => [(-1, -1, Block::new(BlockColor::Cyan)),
+                                      (0, -1, Block::new(BlockColor::Cyan)),
+                                      (1, -1, Block::new(BlockColor::Cyan)),
+                                      (2, -1, Block::new(BlockColor::Cyan))],
+
+                TetrominoShape::O => [(0, -1, Block::new(BlockColor::Yellow)),
+                                      (1, -1, Block::new(BlockColor::Yellow)),
+                                      (0, 0, Block::new(BlockColor::Yellow)),
+                                      (1, 0, Block::new(BlockColor::Yellow))],
+
+                TetrominoShape::T => [(-1, 0, Block::new(BlockColor::Purple)),
+                                      (0, 0, Block::new(BlockColor::Purple)),
+                                      (1, 0, Block::new(BlockColor::Purple)),
+                                      (0, -1, Block::new(BlockColor::Purple))],
+
+                TetrominoShape::S => [(-1, 0, Block::new(BlockColor::Green)),
+                                      (0, 0, Block::new(BlockColor::Green)),
+                                      (0, -1, Block::new(BlockColor::Green)),
+                                      (1, -1, Block::new(BlockColor::Green))],
+
+                TetrominoShape::Z => [(-1, -1, Block::new(BlockColor::Red)),
+                                      (0, -1, Block::new(BlockColor::Red)),
+                                      (0, 0, Block::new(BlockColor::Red)),
+                                      (1, 0, Block::new(BlockColor::Red))],
+
+                TetrominoShape::J => [(-1, -1, Block::new(BlockColor::Blue)),
+                                      (-1, 0, Block::new(BlockColor::Blue)),
+                                      (0, 0, Block::new(BlockColor::Blue)),
+                                      (1, 0, Block::new(BlockColor::Blue))],
+
+                TetrominoShape::L => [(1, -1, Block::new(BlockColor::Orange)),
+                                      (-1, 0, Block::new(BlockColor::Orange)),
+                                      (0, 0, Block::new(BlockColor::Orange)),
+                                      (1, 0, Block::new(BlockColor::Orange))]
+            }
+        }
+    }
+
+    pub fn draw(&self, drawer: &mut RenderDrawer) {
+        for &(x, y, block) in self.blocks.iter() {
+            block.draw(drawer,
+                       (self.x + x) * BLOCK_SIZE as i32,
+                       (self.y + y) * BLOCK_SIZE as i32);
+        }
+    }
+}
+
 pub struct Board {
     grid: [[Option<Block>; BOARD_HEIGHT]; BOARD_WIDTH]
 }
