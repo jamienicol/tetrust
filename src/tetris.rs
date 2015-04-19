@@ -104,11 +104,14 @@ impl Tetromino {
     }
 
     fn check_collision(&self) -> bool {
-        for &(x, _, _) in self.blocks.iter() {
+        for &(x, y, _) in self.blocks.iter() {
             if (self.x + x as i32) < 0 {
                 return true;
             }
             if (self.x + x as i32) >= BOARD_WIDTH as i32 {
+                return true;
+            }
+            if (self.y + y as i32) >= BOARD_HEIGHT as i32 {
                 return true;
             }
         }
