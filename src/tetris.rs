@@ -192,6 +192,15 @@ impl Board {
         }
     }
 
+    pub fn add_tetromino(&mut self, tetromino: Tetromino) {
+        for &(x, y, block) in tetromino.blocks.iter() {
+            let block_x = (tetromino.x + x) as usize;
+            let block_y = (tetromino.y + y) as usize;
+
+            self.grid[block_x][block_y] = Some(block);
+        }
+    }
+
     pub fn draw(&self, drawer: &mut RenderDrawer) {
         for (x, column) in self.grid.iter().enumerate() {
             for (y, &square) in column.iter().enumerate() {
