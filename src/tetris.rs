@@ -103,43 +103,51 @@ impl Tetromino {
         }
     }
 
-    fn check_collision(&self) -> bool {
+    fn check_collision(&self, board: &Board) -> bool {
         for &(x, y, _) in self.blocks.iter() {
-            if (self.x + x as i32) < 0 {
+            let block_x = self.x + x;
+            let block_y = self.y + y;
+
+            if block_x < 0 {
                 return true;
             }
-            if (self.x + x as i32) >= BOARD_WIDTH as i32 {
+            if block_x >= BOARD_WIDTH as i32 {
                 return true;
             }
-            if (self.y + y as i32) >= BOARD_HEIGHT as i32 {
+            if block_y >= BOARD_HEIGHT as i32 {
                 return true;
+            }
+            if block_y >= 0 {
+                if board.grid[block_x as usize][block_y as usize].is_some() {
+                    return true;
+                }
             }
         }
 
         return false;
     }
 
-    pub fn move_left(&mut self, ) {
+    pub fn move_left(&mut self, board: &Board) {
         let orig_x = self.x;
 
         self.x -= 1;
 
-        if self.check_collision() {
+        if self.check_collision(board) {
             self.x = orig_x;
         }
     }
 
-    pub fn move_right(&mut self) {
+    pub fn move_right(&mut self, board: &Board) {
         let orig_x = self.x;
 
         self.x += 1;
 
-        if self.check_collision() {
+        if self.check_collision(board) {
             self.x = orig_x;
         }
     }
 
-    pub fn rotate_clockwise(&mut self) {
+    pub fn rotate_clockwise(&mut self, board: &Board) {
         let orig_x = self.x;
         let orig_blocks = self.blocks;
 
@@ -147,11 +155,11 @@ impl Tetromino {
             self.blocks[i] = (-y, x, block);
         }
 
-        if self.check_collision() {
+        if self.check_collision(board) {
             self.x = orig_x - 1;
-            if self.check_collision() {
+            if self.check_collision(board) {
                 self.x = orig_x + 1;
-                if self.check_collision() {
+                if self.check_collision(board) {
                     self.x = orig_x;
                     self.blocks = orig_blocks;
                 }
@@ -159,12 +167,12 @@ impl Tetromino {
         }
     }
 
-    pub fn move_down(&mut self) -> bool {
+    pub fn move_down(&mut self, board: &Board) -> bool {
         let orig_y = self.y;
 
         self.y += 1;
 
-        if self.check_collision() {
+        if self.check_collision(board) {
             self.y = orig_y;
             return false;
         }
