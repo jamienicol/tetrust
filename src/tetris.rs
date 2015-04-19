@@ -136,6 +136,26 @@ impl Tetromino {
         }
     }
 
+    pub fn rotate_clockwise(&mut self) {
+        let orig_x = self.x;
+        let orig_blocks = self.blocks;
+
+        for (i, &(x, y, block)) in orig_blocks.iter().enumerate() {
+            self.blocks[i] = (-y, x, block);
+        }
+
+        if self.check_collision() {
+            self.x = orig_x - 1;
+            if self.check_collision() {
+                self.x = orig_x + 1;
+                if self.check_collision() {
+                    self.x = orig_x;
+                    self.blocks = orig_blocks;
+                }
+            }
+        }
+    }
+
     pub fn draw(&self, drawer: &mut RenderDrawer) {
         for &(x, y, block) in self.blocks.iter() {
             block.draw(drawer,
