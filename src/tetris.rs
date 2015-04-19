@@ -159,6 +159,19 @@ impl Tetromino {
         }
     }
 
+    pub fn move_down(&mut self) -> bool {
+        let orig_y = self.y;
+
+        self.y += 1;
+
+        if self.check_collision() {
+            self.y = orig_y;
+            return false;
+        }
+
+        return true;
+    }
+
     pub fn draw(&self, drawer: &mut RenderDrawer) {
         for &(x, y, block) in self.blocks.iter() {
             block.draw(drawer,
