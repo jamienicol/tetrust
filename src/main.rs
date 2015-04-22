@@ -1,9 +1,13 @@
+extern crate rand;
 extern crate sdl2;
+
+mod tetris;
 
 use sdl2::event::Event;
 use sdl2::keycode::KeyCode;
 use sdl2::pixels::Color;
 use sdl2::render::{ Renderer, RenderDriverIndex, ACCELERATED, PRESENTVSYNC };
+use sdl2::timer::get_ticks;
 use sdl2::video::{ Window, WindowPos, OPENGL };
 
 fn main() {
@@ -27,6 +31,10 @@ fn main() {
 
     let mut drawer = renderer.drawer();
 
+    let mut game = tetris::Game::new();
+
+    let mut old_t = get_ticks();
+
     let mut running = true;
     while running {
         for event in sdl.event_pump().poll_iter() {
@@ -35,12 +43,33 @@ fn main() {
                 Event::KeyDown { keycode: KeyCode::Escape, .. } => {
                     running = false
                 },
+
+                Event::KeyDown { keycode: KeyCode::Left, .. } => {
+                    game.input_left();
+                },
+                Event::KeyDown { keycode: KeyCode::Right, .. } => {
+                    game.input_right();
+                },
+                Event::KeyDown { keycode: KeyCode::Up, .. } => {
+                    game.input_rotate();
+                },
+                Event::KeyDown { keycode: KeyCode::Down, .. } => {
+                    game.input_down();
+                },
+
                 _ => {}
             }
         }
 
+        let new_t = get_ticks();
+        game.advance_ms(new_t - old_t);
+        old_t = new_t;
+
         drawer.set_draw_color(Color::RGB(0, 0, 0));
         drawer.clear();
+
+        game.draw(&mut drawer);
+
         drawer.present();
     }
 }
