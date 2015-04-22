@@ -62,7 +62,7 @@ pub struct Tetromino {
 impl Tetromino {
     pub fn new(shape: TetrominoShape) -> Tetromino {
         Tetromino {
-            x: 0,
+            x: 4,
             y: 0,
             blocks: match shape {
                 TetrominoShape::I => [(-1, -1, Block::new(BlockColor::Cyan)),
