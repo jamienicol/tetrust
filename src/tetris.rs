@@ -1,5 +1,7 @@
+extern crate rand;
 extern crate sdl2;
 
+use rand::Rng;
 use sdl2::pixels::Color;
 use sdl2::rect::Rect;
 use sdl2::render::RenderDrawer;
@@ -53,6 +55,7 @@ impl Block {
 
 pub enum TetrominoShape { I, O, T, S, Z, J, L }
 
+#[derive(Copy, Clone)]
 pub struct Tetromino {
     x: i32,
     y: i32,
@@ -219,6 +222,70 @@ impl Board {
                     None => {}
                 }
             }
+        }
+    }
+}
+
+pub struct Game {
+    board: Board,
+    tetromino: Tetromino,
+    time: u32
+}
+
+impl Game {
+    pub fn new() -> Game {
+        Game {
+            board: Board::new(),
+            tetromino: Tetromino::new(Game::get_random_shape()),
+            time: 0
+        }
+    }
+
+    pub fn input_left(&mut self) {
+        self.tetromino.move_left(&self.board);
+    }
+
+    pub fn input_right(&mut self) {
+        self.tetromino.move_right(&self.board);
+    }
+
+    pub fn input_rotate(&mut self) {
+        self.tetromino.rotate_clockwise(&self.board)
+    }
+
+    pub fn input_down(&mut self) {
+        self.time = 0;
+
+        let did_move = self.tetromino.move_down(&self.board);
+        if !did_move {
+            self.board.add_tetromino(self.tetromino);
+            self.tetromino = Tetromino::new(Game::get_random_shape());
+        }
+    }
+
+    pub fn advance_ms(&mut self, ms: u32) {
+        self.time += ms;
+
+        if self.time >= 1000 {
+            self.input_down();
+        }
+    }
+
+    pub fn draw(&self, drawer: &mut RenderDrawer) {
+        self.board.draw(drawer);
+        self.tetromino.draw(drawer);
+    }
+
+    fn get_random_shape() -> TetrominoShape {
+        match rand::thread_rng().gen_range(0, 7) {
+            0 => TetrominoShape::I,
+            1 => TetrominoShape::O,
+            2 => TetrominoShape::T,
+            3 => TetrominoShape::S,
+            4 => TetrominoShape::Z,
+            5 => TetrominoShape::J,
+            6 => TetrominoShape::L,
+            _ => panic!()
         }
     }
 }
