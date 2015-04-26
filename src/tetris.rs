@@ -212,6 +212,38 @@ impl Board {
         }
     }
 
+    pub fn clean(&mut self) {
+        let mut cleaned_lines = 0;
+
+        for i in 0..BOARD_HEIGHT {
+            let y = BOARD_HEIGHT - 1 - i;
+
+            if self.row_is_full(y) {
+                cleaned_lines += 1;
+            } else {
+                if cleaned_lines > 0 {
+                    self.move_row(y, y + cleaned_lines);
+                }
+            }
+        }
+    }
+
+    fn row_is_full(&self, y: usize) -> bool {
+        for x in 0..BOARD_WIDTH {
+            if self.grid[x][y].is_none() {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    fn move_row(&mut self, src_y: usize, dest_y: usize) {
+        for x in 0..BOARD_WIDTH {
+            self.grid[x][dest_y] = self.grid[x][src_y];
+        }
+    }
+
     pub fn draw(&self, drawer: &mut RenderDrawer) {
         for (x, column) in self.grid.iter().enumerate() {
             for (y, &square) in column.iter().enumerate() {
@@ -259,6 +291,7 @@ impl Game {
         let did_move = self.tetromino.move_down(&self.board);
         if !did_move {
             self.board.add_tetromino(self.tetromino);
+            self.board.clean();
             self.tetromino = Tetromino::new(Game::get_random_shape());
         }
     }
